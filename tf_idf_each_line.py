@@ -1,5 +1,5 @@
 import csv
-
+import math
 def TF(word_count, words_document):
     # word_count count of all words
     # words_document one doc to count
@@ -14,16 +14,16 @@ def TF(word_count, words_document):
     return TF
 
 def DF (word, allDocuments):
-    doc_count = {}
+    
+    count = 0 
     for doc in allDocuments:
         if word in doc:
-            if word in doc_count:
-                doc_count[word] += 1
-            else:
-                doc_count[word] = 0
-    return doc_count
+            count +=1 #D(w)
+    
+    return count/len(allDocuments)
 
-
+def IDF (word, DF):
+    return math.log10(1/DF)
 
 with open('text.csv', mode='r') as csv_file:
     csv_reader = csv.reader(csv_file, delimiter=' ')
@@ -37,29 +37,37 @@ with open('text.csv', mode='r') as csv_file:
     print("====")
     totalWords =set()
     # allWord_count = dict()
-    TF_total = []
+    TF_total = {}
     
     for doc_words in rows:
         totalWords = set(doc_words).union(totalWords)
         
-        allWords = set(doc_words)
+        # allWords = set(doc_words)
 
-        allWord_count={}
-        # allWord_count.fromkeys(allWords, 0) 
-        # print('allWord_count ', allWord_count)
-        # Counting all words
-        for word in doc_words:
-            if word not in allWord_count:
-                allWord_count[word] = 0
-            allWord_count[word]+=1 #counting
+    allWord_count={}
+    # allWord_count.fromkeys(allWords, 0) 
+    # print('allWord_count ', allWord_count)
+    # Counting all words
+    for word in totalWords:
+        if word not in allWord_count:
+            allWord_count[word] = 0
+        allWord_count[word]+=1 #counting
 
-        print(allWord_count)
 
-        # frequency of each word
-        TF_total.append(TF(allWord_count, doc_words))
-    print('TF ', TF_total)
-    DF_total = []
+    DF_total = {}
+
     for i in totalWords:
-        DF_total.append(DF(i, rows))
+        DF_total[i]= DF(i, rows)
 
-    print('DF_total ', DF_total)
+    # print('DF_total ', DF_total)
+
+    # frequency of each word
+    for doc_words in rows:
+
+        TF_this = TF(allWord_count, doc_words)
+
+        for i in doc_words:
+            
+            TF_IDF= IDF(i, DF_total[i])*TF_this[i]
+            print("Word: '{}' TF_IDF: '{}' ".format(i, TF_IDF))
+
