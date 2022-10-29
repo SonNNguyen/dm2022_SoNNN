@@ -4,6 +4,9 @@ import json
 import re
 import matplotlib.pyplot as plt
 import numpy as np
+import time
+
+tik = time.time()
 
 
     ############### THE DATA STRUCTURE & Algorithm #################
@@ -156,3 +159,4 @@ with open('file1.json', mode='r') as f:
             f.write("{}\n".format(line) )
             f.write("--------------------\n")
 
+print("Total time = ", time.time() - tik)	
